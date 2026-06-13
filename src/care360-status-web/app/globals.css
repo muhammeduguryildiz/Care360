@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-navy-900 text-slate-100 antialiased;
+}
+
+/* ────────────────────────────────────────────────────
+   Light theme overrides
+   Sidebar stays dark (outside #main-content).
+   Only the main content area switches.
+   ──────────────────────────────────────────────────── */
+
+[data-theme="light"] body {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Backgrounds */
+[data-theme="light"] #main-content .bg-navy-800  { background-color: #ffffff; }
+[data-theme="light"] #main-content .bg-navy-900  { background-color: #f8fafc; }
+[data-theme="light"] #main-content .bg-navy-750  { background-color: #f1f5f9; }
+[data-theme="light"] #main-content .bg-navy-700  { background-color: #e9eef4; }
+
+/* Borders */
+[data-theme="light"] #main-content .border-navy-600 { border-color: #cbd5e1; }
+[data-theme="light"] #main-content .border-navy-500 { border-color: #94a3b8; }
+[data-theme="light"] #main-content .border-navy-700 { border-color: #e2e8f0; }
+
+/* Hover states */
+[data-theme="light"] #main-content .hover\:bg-navy-750:hover  { background-color: #f1f5f9; }
+[data-theme="light"] #main-content .hover\:bg-navy-700:hover  { background-color: #e9eef4; }
+[data-theme="light"] #main-content .hover\:border-navy-500:hover { border-color: #94a3b8; }
+[data-theme="light"] #main-content .hover\:bg-navy-800:hover { background-color: #f8fafc; }
+
+/* Divide (table row separators) */
+[data-theme="light"] #main-content .divide-navy-700 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #e2e8f0;
+}
+
+/* Primary text colors */
+[data-theme="light"] #main-content .text-slate-100 { color: #0f172a; }
+[data-theme="light"] #main-content .text-slate-200 { color: #1e293b; }
+[data-theme="light"] #main-content .text-slate-300 { color: #334155; }
+[data-theme="light"] #main-content .text-slate-400 { color: #64748b; }
+[data-theme="light"] #main-content .text-slate-500 { color: #94a3b8; }
+[data-theme="light"] #main-content .text-slate-600 { color: #94a3b8; }
+
+/* Status colors — brighter variants become darker on light bg */
+[data-theme="light"] #main-content .text-green-400  { color: #16a34a; }
+[data-theme="light"] #main-content .text-amber-400  { color: #b45309; }
+[data-theme="light"] #main-content .text-red-400    { color: #dc2626; }
+[data-theme="light"] #main-content .text-blue-400   { color: #2563eb; }
+[data-theme="light"] #main-content .text-indigo-400 { color: #4338ca; }
+[data-theme="light"] #main-content .text-orange-400 { color: #ea580c; }
+[data-theme="light"] #main-content .text-yellow-400 { color: #ca8a04; }
+
+/* Incident / alert banner backgrounds */
+[data-theme="light"] #main-content .bg-red-950\/60    { background-color: rgba(254, 242, 242, 0.9); }
+[data-theme="light"] #main-content .bg-orange-950\/60 { background-color: rgba(255, 247, 237, 0.9); }
+[data-theme="light"] #main-content .bg-yellow-950\/60 { background-color: rgba(254, 252, 232, 0.9); }
+[data-theme="light"] #main-content .bg-blue-950\/60   { background-color: rgba(239, 246, 255, 0.9); }
+[data-theme="light"] #main-content .bg-green-950\/60  { background-color: rgba(240, 253, 244, 0.9); }
+
+[data-theme="light"] #main-content .bg-red-950    { background-color: #fef2f2; }
+[data-theme="light"] #main-content .bg-orange-950 { background-color: #fff7ed; }
+[data-theme="light"] #main-content .bg-yellow-950 { background-color: #fefce8; }
+[data-theme="light"] #main-content .bg-amber-950  { background-color: #fffbeb; }
+[data-theme="light"] #main-content .bg-blue-950   { background-color: #eff6ff; }
+[data-theme="light"] #main-content .bg-green-950  { background-color: #f0fdf4; }
+
+/* Incident banner text */
+[data-theme="light"] #main-content .text-red-300    { color: #dc2626; }
+[data-theme="light"] #main-content .text-orange-300 { color: #ea580c; }
+[data-theme="light"] #main-content .text-yellow-300 { color: #ca8a04; }
+[data-theme="light"] #main-content .text-blue-300   { color: #2563eb; }
+[data-theme="light"] #main-content .text-green-300  { color: #16a34a; }
+
+/* Form inputs & selects */
+[data-theme="light"] #main-content input,
+[data-theme="light"] #main-content select,
+[data-theme="light"] #main-content textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] #main-content input::placeholder,
+[data-theme="light"] #main-content textarea::placeholder {
+  color: #94a3b8 !important;
+}

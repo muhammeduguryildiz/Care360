@@ -1,0 +1,121 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pr: none
+
+variables:
+  dotnetVersion: '8.x'
+  nodeVersion: '20.x'
+  functionAppName: 'care360statusprod-func'  # Update to match your deployed name
+  # Store these as pipeline secret variables (Library > Variable groups or Pipeline settings):
+  # SWA_DEPLOYMENT_TOKEN   — from Bicep output swaDeploymentToken
+  # AZURE_SUBSCRIPTION     — Azure service connection name in DevOps
+
+stages:
+
+# ─── Stage 1: Build ──────────────────────────────────────────────────────────
+- stage: Build
+  displayName: 'Build'
+  jobs:
+
+  - job: BuildFunctions
+    displayName: 'Build .NET Function App'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        version: $(dotnetVersion)
+
+    - script: dotnet restore
+      workingDirectory: src/Care360.Status.Functions
+      displayName: 'Restore NuGet'
+
+    - script: dotnet build --configuration Release --no-restore
+      workingDirectory: src/Care360.Status.Functions
+      displayName: 'Build'
+
+    - script: dotnet publish --configuration Release --output $(Build.ArtifactStagingDirectory)/functions --no-build
+      workingDirectory: src/Care360.Status.Functions
+      displayName: 'Publish'
+
+    - publish: $(Build.ArtifactStagingDirectory)/functions
+      artifact: functions
+      displayName: 'Upload functions artifact'
+
+  - job: BuildWeb
+    displayName: 'Build Next.js Static Export'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: UseNode@1
+      inputs:
+        version: $(nodeVersion)
+
+    - script: npm ci
+      workingDirectory: src/care360-status-web
+      displayName: 'npm install'
+
+    - script: npm run build
+      workingDirectory: src/care360-status-web
+      displayName: 'next build (static export)'
+
+    - publish: src/care360-status-web/out
+      artifact: web
+      displayName: 'Upload web artifact'
+
+# ─── Stage 2: Deploy ─────────────────────────────────────────────────────────
+- stage: Deploy
+  displayName: 'Deploy'
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+
+  - deployment: DeployFunctions
+    displayName: 'Deploy Function App'
+    environment: 'production'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: functions
+
+          - task: AzureFunctionApp@2
+            displayName: 'Deploy to Azure Functions'
+            inputs:
+              connectedServiceNameARM: $(AZURE_SUBSCRIPTION)
+              appType: functionAppLinux
+              appName: $(functionAppName)
+              package: $(Pipeline.Workspace)/functions
+              runtimeStack: 'DOTNET-ISOLATED|8.0'
+
+  - deployment: DeployWeb
+    displayName: 'Deploy Static Web App'
+    environment: 'production'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: web
+
+          - task: AzureStaticWebApp@0
+            displayName: 'Deploy to Azure SWA'
+            inputs:
+              app_location: ''
+              output_location: ''
+              azure_static_web_apps_api_token: $(SWA_DEPLOYMENT_TOKEN)
+              # Point to the pre-built artifact
+              deployment_environment: 'production'
+            env:
+              DEPLOYMENT_PROVIDER: 'DevOps'
+              # override: deploy from artifact directly
+              SKIP_APP_BUILD: 'true'
+              ARTIFACT_FOLDER: $(Pipeline.Workspace)/web

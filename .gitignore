@@ -1,0 +1,22 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+local.settings.json
+
+# Node
+node_modules/
+.next/
+out/
+.env
+.env.local
+
+# Azure
+.azure/
+*.pubxml
+*.pubxml.user
+
+# OS
+.DS_Store
+Thumbs.db
