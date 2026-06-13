@@ -1,3 +1,4 @@
+// @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Static export only when explicitly requested (Azure SWA production builds).
